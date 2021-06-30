@@ -7,6 +7,21 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
+      - run: |
+          echo \
+            "vars are github.event_name ${{ github.event_name }}" \
+            "runner.os ${{ runner.os }}, github.ref ${{ github.ref }}" \
+            "github.repository ${{ github.repository }}" \
+            "job.status ${{ job.status }}"
+      - name: Check out repository code
+        uses: actions/checkout@v2
+      - name: List changes
+        run: |
+          git show --stat
+      - name: Try Run Maven
+        run: |
+          mvn --version && mvn clean compile
+      - run: echo "🍏 This job's status is ${{ job.status }}."
       - name: Comment on PR
         uses: actions/github-script@0.3.0
         if: github.event_name == 'pull_request'
@@ -14,11 +29,4 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const { issue: { number: issue_number }, repo: { owner, repo }  } = context;
-            github.issues.createComment({ issue_number, owner, repo, body: 'Hello world ! 👋' });
-      - run: echo "vars are github.event_name ${{ github.event_name }}, runner.os ${{ runner.os }}, github.ref ${{ github.ref }}, github.repository ${{ github.repository }}"
-      - name: Check out repository code
-        uses: actions/checkout@v2
-      - name: List files in the repository
-        run: |
-          ls ${{ github.workspace }}
-      - run: echo "🍏 This job's status is ${{ job.status }}."
+            github.issues.createComment({ issue_number, owner, repo, body: 'Running' });
