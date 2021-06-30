@@ -25,8 +25,8 @@ jobs:
       - run: cd ${{ github.workspace }}/installer && mvn clean compile
       
       # Compile Layers
-      - run: cd ${{ github.workspace }}/layers/apigw-helper && mvn clean compile
       - run: cd ${{ github.workspace }}/layers/utils && mvn clean compile
+      - run: cd ${{ github.workspace }}/layers/apigw-helper && mvn clean compile
       
       # Compile Functions
       - run: cd ${{ github.workspace }}/functions/alb-update && mvn clean compile
