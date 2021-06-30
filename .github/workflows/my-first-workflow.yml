@@ -3,7 +3,7 @@ on:
   pull_request:
     branches: [ main ]
 jobs:
-  Compile-Installer:
+  Compile-All:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -21,43 +21,32 @@ jobs:
 #           java-version: '11'
 #           distribution: 'adopt'
 
-      - run: cd installer && mvn clean compile
-      - name: Comment on Compilation Failure
-        uses: actions/github-script@0.3.0
-        if: ${{ failure() }}
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            const { issue: { number: issue_number }, repo: { owner, repo }  } = context;
-            github.issues.createComment({ issue_number, owner, repo, body: 'Compile failed! See GitHub Action output for results. PRs will not be merged if they break the build!' });
-      - name: Comment on PR
-        uses: actions/github-script@0.3.0
-        if: github.event_name == 'pull_request'
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            const { issue: { number: issue_number }, repo: { owner, repo }  } = context;
-            github.issues.createComment({ issue_number, owner, repo, body: 'Installer Compilation Succeeded' });
-  Compile-Onboarding:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-        with:
-          ref: ${{ github.event.pull_request.head.sha }}
-      - run: cd services/onboarding-service && mvn clean compile
-      - name: Comment on Compilation Failure
-        uses: actions/github-script@0.3.0
-        if: ${{ failure() }}
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            const { issue: { number: issue_number }, repo: { owner, repo }  } = context;
-            github.issues.createComment({ issue_number, owner, repo, body: 'Compile failed! See GitHub Action output for results. PRs will not be merged if they break the build!' });
-      - name: Comment on PR
-        uses: actions/github-script@0.3.0
-        if: github.event_name == 'pull_request'
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            const { issue: { number: issue_number }, repo: { owner, repo }  } = context;
-            github.issues.createComment({ issue_number, owner, repo, body: 'Onboarding Compilation Succeeded' });
+      # Compile Installer
+      - run: cd ${{ github.workspace }}/installer && mvn clean compile
+      
+      # Compile Layers
+      - run: cd ${{ github.workspace }}/layers/apigw-helper && mvn clean compile
+      - run: cd ${{ github.workspace }}/layers/utils && mvn clean compile
+      
+      # Compile Functions
+      - run: cd ${{ github.workspace }}/functions/alb-update && mvn clean compile
+      - run: cd ${{ github.workspace }}/functions/ecs-deploy && mvn clean compile
+      - run: cd ${{ github.workspace }}/functions/ecs-service-update && mvn clean compile
+      - run: cd ${{ github.workspace }}/functions/onboarding-notification && mvn clean compile
+      - run: cd ${{ github.workspace }}/functions/system-rest-api-client && mvn clean compile
+      
+      # Compile Resources
+      - run: cd ${{ github.workspace }}/resources/custom-resources/cidr-dynamodb && mvn clean compile
+      - run: cd ${{ github.workspace }}/resources/custom-resources/clear-s3-bucket && mvn clean compile
+      - run: cd ${{ github.workspace }}/resources/custom-resources/fsx-dns-name && mvn clean compile
+      - run: cd ${{ github.workspace }}/resources/custom-resources/rds-bootstrap && mvn clean compile
+      - run: cd ${{ github.workspace }}/resources/custom-resources/rds-options && mvn clean compile
+      - run: cd ${{ github.workspace }}/resources/custom-resources/redshift-table && mvn clean compile
+      
+      # Compile Services
+      - run: cd ${{ github.workspace }}/services/metric-service && mvn clean compile
+      - run: cd ${{ github.workspace }}/services/onboarding-service && mvn clean compile
+      - run: cd ${{ github.workspace }}/services/quotas-service && mvn clean compile
+      - run: cd ${{ github.workspace }}/services/settings-service && mvn clean compile
+      - run: cd ${{ github.workspace }}/services/tenant-service && mvn clean compile
+      - run: cd ${{ github.workspace }}/services/user-service && mvn clean compile
