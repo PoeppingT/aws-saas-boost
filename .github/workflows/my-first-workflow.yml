@@ -3,7 +3,7 @@ on:
   pull_request:
     branches: [ main ]
 jobs:
-  Run Compiler:
+  Compile-All:
     runs-on: ubuntu-latest
     steps:
       - run: |
