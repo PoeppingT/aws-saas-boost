@@ -3,15 +3,12 @@ on:
   pull_request:
     branches: [ main ]
 jobs:
-  Compile-All:
+  Compile-Java:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
         with:
           ref: ${{ github.event.pull_request.head.sha }}
-      - uses: actions/setup-node@v2
-        with:
-          node-version: 14
 
 #       We use Corretto Java 11 for Lambda: https://docs.aws.amazon.com/lambda/latest/dg/lambda-runtimes.html
 #       Currently amazon-corretto Java is not supported for GitHub actions on Ubuntu-latest. By default we're using Adopt JDK11
@@ -55,6 +52,13 @@ jobs:
       - run: cd ${{ github.workspace }}/services/tenant-service && mvn clean install -DskipTests
       - run: cd ${{ github.workspace }}/services/user-service && mvn clean install -DskipTests
 
-      # Build Web Client
-      # - run: cd ${{ github.workspace }}/client/web/ && npm install react && npm install react-dom && npm install react-scripts && npm install moment-timezone && yarn build
+  Compile-WebClient:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 14
       - run: cd ${{ github.workspace }}/client/web && yarn && CI=false yarn build
