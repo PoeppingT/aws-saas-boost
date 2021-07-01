@@ -21,32 +21,33 @@ jobs:
 #           java-version: '11'
 #           distribution: 'adopt'
 
+# This is... not good. Parent POM incoming which will group these and manage dependencies at a higher level.
       # Compile Installer
-      - run: cd ${{ github.workspace }}/installer && mvn clean compile
+      - run: cd ${{ github.workspace }}/installer && mvn clean install -DskipTests
       
       # Compile Layers
-      - run: cd ${{ github.workspace }}/layers/utils && mvn clean compile
-      - run: cd ${{ github.workspace }}/layers/apigw-helper && mvn clean compile
+      - run: cd ${{ github.workspace }}/layers/utils && mvn clean install -DskipTests
+      - run: cd ${{ github.workspace }}/layers/apigw-helper && mvn clean install -DskipTests
       
       # Compile Functions
-      - run: cd ${{ github.workspace }}/functions/alb-update && mvn clean compile
-      - run: cd ${{ github.workspace }}/functions/ecs-deploy && mvn clean compile
-      - run: cd ${{ github.workspace }}/functions/ecs-service-update && mvn clean compile
-      - run: cd ${{ github.workspace }}/functions/onboarding-notification && mvn clean compile
-      - run: cd ${{ github.workspace }}/functions/system-rest-api-client && mvn clean compile
+      - run: cd ${{ github.workspace }}/functions/alb-update && mvn clean install -DskipTests
+      - run: cd ${{ github.workspace }}/functions/ecs-deploy && mvn clean install -DskipTests
+      - run: cd ${{ github.workspace }}/functions/ecs-service-update && mvn clean install -DskipTests
+      - run: cd ${{ github.workspace }}/functions/onboarding-notification && mvn clean install -DskipTests
+      - run: cd ${{ github.workspace }}/functions/system-rest-api-client && mvn clean install -DskipTests
       
       # Compile Resources
-      - run: cd ${{ github.workspace }}/resources/custom-resources/cidr-dynamodb && mvn clean compile
-      - run: cd ${{ github.workspace }}/resources/custom-resources/clear-s3-bucket && mvn clean compile
-      - run: cd ${{ github.workspace }}/resources/custom-resources/fsx-dns-name && mvn clean compile
-      - run: cd ${{ github.workspace }}/resources/custom-resources/rds-bootstrap && mvn clean compile
-      - run: cd ${{ github.workspace }}/resources/custom-resources/rds-options && mvn clean compile
-      - run: cd ${{ github.workspace }}/resources/custom-resources/redshift-table && mvn clean compile
+      - run: cd ${{ github.workspace }}/resources/custom-resources/cidr-dynamodb && mvn clean install -DskipTests
+      - run: cd ${{ github.workspace }}/resources/custom-resources/clear-s3-bucket && mvn clean install -DskipTests
+      - run: cd ${{ github.workspace }}/resources/custom-resources/fsx-dns-name && mvn clean install -DskipTests
+      - run: cd ${{ github.workspace }}/resources/custom-resources/rds-bootstrap && mvn clean install -DskipTests
+      - run: cd ${{ github.workspace }}/resources/custom-resources/rds-options && mvn clean install -DskipTests
+      - run: cd ${{ github.workspace }}/resources/custom-resources/redshift-table && mvn clean install -DskipTests
       
       # Compile Services
-      - run: cd ${{ github.workspace }}/services/metric-service && mvn clean compile
-      - run: cd ${{ github.workspace }}/services/onboarding-service && mvn clean compile
-      - run: cd ${{ github.workspace }}/services/quotas-service && mvn clean compile
-      - run: cd ${{ github.workspace }}/services/settings-service && mvn clean compile
-      - run: cd ${{ github.workspace }}/services/tenant-service && mvn clean compile
-      - run: cd ${{ github.workspace }}/services/user-service && mvn clean compile
+      - run: cd ${{ github.workspace }}/services/metric-service && mvn clean install -DskipTests
+      - run: cd ${{ github.workspace }}/services/onboarding-service && mvn clean install -DskipTests
+      - run: cd ${{ github.workspace }}/services/quotas-service && mvn clean install -DskipTests
+      - run: cd ${{ github.workspace }}/services/settings-service && mvn clean install -DskipTests
+      - run: cd ${{ github.workspace }}/services/tenant-service && mvn clean install -DskipTests
+      - run: cd ${{ github.workspace }}/services/user-service && mvn clean install -DskipTests
