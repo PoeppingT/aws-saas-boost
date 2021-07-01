@@ -53,5 +53,4 @@ jobs:
       - run: cd ${{ github.workspace }}/services/user-service && mvn clean install -DskipTests
 
       # Build Web Client
-      - run: npm install react && npm install react-dom && npm install react-scripts
-      - run: cd ${{ github.workspace }}/client/web/ && yarn build
+      - run: npm install react && npm install react-dom && npm install react-scripts && cd ${{ github.workspace }}/client/web/ && yarn build
