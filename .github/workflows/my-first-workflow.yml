@@ -53,5 +53,4 @@ jobs:
       - run: cd ${{ github.workspace }}/services/user-service && mvn clean install -DskipTests
 
       # Build Web Client
-      - run: npm install -g yarn
-      - run: cd ${{ github.workspace }}/client/web/ && yarn build
+      - run: cd ${{ github.workspace }}/client/web/ && yarn
