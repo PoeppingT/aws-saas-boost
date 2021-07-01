@@ -57,4 +57,4 @@ jobs:
 
       # Build Web Client
       # - run: cd ${{ github.workspace }}/client/web/ && npm install react && npm install react-dom && npm install react-scripts && npm install moment-timezone && yarn build
-      - run: cd ${{ github.workspace }}/client/web && yarn && yarn build
+      - run: cd ${{ github.workspace }}/client/web && yarn && CI=false yarn build
