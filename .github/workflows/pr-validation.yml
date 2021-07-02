@@ -68,7 +68,7 @@ jobs:
           find "${{ github.workspace }}/services" -maxdepth 1 -mindepth 1 -type d | 
           while read dir ; do 
             cd $dir
-            echo "${{ jobs.${{ github.job }}.name }} building $dir"
+            echo "${{ github.job.name }} building $dir"
             mvn clean install -DskipTests
             cd -
           done
