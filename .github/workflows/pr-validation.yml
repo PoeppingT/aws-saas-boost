@@ -34,41 +34,43 @@ jobs:
       # Including a parent pom will solve both of the above.
       - name: Compile Installer
         run: |
-          cd "${{ github.workspace }}/installer"
+          dir=${{ github.workspace }}/installer
+          cd $dir
+          echo "${{ github.job }} building $dir"
           mvn clean install -DskipTests
       - name: Compile Layers
         run: |
           find ${{ github.workspace }}/layers -maxdepth 1 -mindepth 1 -type d | 
           while read dir ; do 
             cd $dir
-            echo "Building $dir"
+            echo "${{ github.job }} building $dir"
             mvn clean install -DskipTests
             cd -
           done
       - name: Compile Functions
         run: |
-          find "${{ github.workspace }}/functions" -maxdepth 1 -mindepth 1 -type d | 
+          find ${{ github.workspace }}/functions -maxdepth 1 -mindepth 1 -type d | 
           while read dir ; do 
             cd $dir
-            echo "Building $dir"
+            echo "${{ github.job }} building $dir"
             mvn clean install -DskipTests
             cd -
           done
       - name: Compile Resources
         run: |
-          find "${{ github.workspace }}/resources/custom-resources" -maxdepth 1 -mindepth 1 -type d |
+          find ${{ github.workspace }}/resources/custom-resources -maxdepth 1 -mindepth 1 -type d |
           while read dir ; do 
             cd $dir
-            echo "Building $dir"
+            echo "${{ github.job }} building $dir"
             mvn clean install -DskipTests
             cd -
           done
       - name: Compile Services
         run: |
-          find "${{ github.workspace }}/services" -maxdepth 1 -mindepth 1 -type d | 
+          find ${{ github.workspace }}/services -maxdepth 1 -mindepth 1 -type d | 
           while read dir ; do 
             cd $dir
-            echo "${{ github.job.name }} building $dir"
+            echo "${{ github.job }} building $dir"
             mvn clean install -DskipTests
             cd -
           done
