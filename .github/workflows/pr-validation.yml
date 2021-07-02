@@ -10,47 +10,55 @@ jobs:
         with:
           ref: ${{ github.event.pull_request.head.sha }}
 
-#       We use Corretto Java 11 for Lambda: https://docs.aws.amazon.com/lambda/latest/dg/lambda-runtimes.html
-#       Currently amazon-corretto Java is not supported for GitHub actions on Ubuntu-latest. By default we're using Adopt JDK11
-#         https://github.com/actions/virtual-environments/blob/main/images/linux/Ubuntu2004-README.md
-#       We may want to either switch to using an AL2 container (to give us corretto) or contribute a new JDK to the GitHub runners
-#         There is an open issue (as of 2021/06/30) requesting Corretto support: https://github.com/actions/setup-java/issues/68
-#       - name: Set up JDK 11
-#         uses: actions/setup-java@v2
-#         with:
-#           java-version: '11'
-#           distribution: 'adopt'
-
-# This is... not good. Parent POM incoming which will group these and manage dependencies at a higher level.
+      # We use Corretto Java 11 for Lambda: https://docs.aws.amazon.com/lambda/latest/dg/lambda-runtimes.html
+      # Currently amazon-corretto Java is not supported for GitHub actions on Ubuntu-latest. By default we're using Adopt JDK11
+      #   https://github.com/actions/virtual-environments/blob/main/images/linux/Ubuntu2004-README.md
+      # We may want to either switch to using an AL2 container (to give us corretto) or contribute a new JDK to the GitHub runners
+      #   There is an open issue (as of 2021/06/30) requesting Corretto support: https://github.com/actions/setup-java/issues/68
+      # - name: Set up JDK 11
+      #   uses: actions/setup-java@v2
+      #   with:
+      #     java-version: '11'
+      #     distribution: 'adopt'
+      
+      # TODO add parent pom for Java built services
+      # This is... not good. We currently have no way to build all Java code with a single command. 
+      # We can't just run mvn clean compile because later modules rely on the binaries of earlier ones. 
+      # Including a parent pom will solve both of the above.
+      
       # Compile Installer
       - run: cd ${{ github.workspace }}/installer && mvn clean install -DskipTests
       
       # Compile Layers
-      - run: cd ${{ github.workspace }}/layers/utils && mvn clean install -DskipTests
-      - run: cd ${{ github.workspace }}/layers/apigw-helper && mvn clean install -DskipTests
+      - run: find ${{ github.workspace }}/layers -d 1 -type d | while read dir ; do cd $dir ; mvn clean install -DskipTests ; cd - ; done
+      # - run: cd ${{ github.workspace }}/layers/utils && mvn clean install -DskipTests
+      # - run: cd ${{ github.workspace }}/layers/apigw-helper && mvn clean install -DskipTests
       
       # Compile Functions
-      - run: cd ${{ github.workspace }}/functions/alb-update && mvn clean install -DskipTests
-      - run: cd ${{ github.workspace }}/functions/ecs-deploy && mvn clean install -DskipTests
-      - run: cd ${{ github.workspace }}/functions/ecs-service-update && mvn clean install -DskipTests
-      - run: cd ${{ github.workspace }}/functions/onboarding-notification && mvn clean install -DskipTests
-      - run: cd ${{ github.workspace }}/functions/system-rest-api-client && mvn clean install -DskipTests
+      - run: find ${{ github.workspace }}/functions -d 1 -type d | while read dir ; do cd $dir ; mvn clean install -DskipTests ; cd - ; done
+      # - run: cd ${{ github.workspace }}/functions/alb-update && mvn clean install -DskipTests
+      # - run: cd ${{ github.workspace }}/functions/ecs-deploy && mvn clean install -DskipTests
+      # - run: cd ${{ github.workspace }}/functions/ecs-service-update && mvn clean install -DskipTests
+      # - run: cd ${{ github.workspace }}/functions/onboarding-notification && mvn clean install -DskipTests
+      # - run: cd ${{ github.workspace }}/functions/system-rest-api-client && mvn clean install -DskipTests
       
       # Compile Resources
-      - run: cd ${{ github.workspace }}/resources/custom-resources/cidr-dynamodb && mvn clean install -DskipTests
-      - run: cd ${{ github.workspace }}/resources/custom-resources/clear-s3-bucket && mvn clean install -DskipTests
-      - run: cd ${{ github.workspace }}/resources/custom-resources/fsx-dns-name && mvn clean install -DskipTests
-      - run: cd ${{ github.workspace }}/resources/custom-resources/rds-bootstrap && mvn clean install -DskipTests
-      - run: cd ${{ github.workspace }}/resources/custom-resources/rds-options && mvn clean install -DskipTests
-      - run: cd ${{ github.workspace }}/resources/custom-resources/redshift-table && mvn clean install -DskipTests
+      - run: find ${{ github.workspace }}/resources/custom-resources -d 1 -type d | while read dir ; do cd $dir ; mvn clean install -DskipTests ; cd - ; done
+      # - run: cd ${{ github.workspace }}/resources/custom-resources/cidr-dynamodb && mvn clean install -DskipTests
+      # - run: cd ${{ github.workspace }}/resources/custom-resources/clear-s3-bucket && mvn clean install -DskipTests
+      # - run: cd ${{ github.workspace }}/resources/custom-resources/fsx-dns-name && mvn clean install -DskipTests
+      # - run: cd ${{ github.workspace }}/resources/custom-resources/rds-bootstrap && mvn clean install -DskipTests
+      # - run: cd ${{ github.workspace }}/resources/custom-resources/rds-options && mvn clean install -DskipTests
+      # - run: cd ${{ github.workspace }}/resources/custom-resources/redshift-table && mvn clean install -DskipTests
       
       # Compile Services
-      - run: cd ${{ github.workspace }}/services/metric-service && mvn clean install -DskipTests
-      - run: cd ${{ github.workspace }}/services/onboarding-service && mvn clean install -DskipTests
-      - run: cd ${{ github.workspace }}/services/quotas-service && mvn clean install -DskipTests
-      - run: cd ${{ github.workspace }}/services/settings-service && mvn clean install -DskipTests
-      - run: cd ${{ github.workspace }}/services/tenant-service && mvn clean install -DskipTests
-      - run: cd ${{ github.workspace }}/services/user-service && mvn clean install -DskipTests
+      - run: find ${{ github.workspace }}/services -d 1 -type d | while read dir ; do cd $dir ; mvn clean install -DskipTests ; cd - ; done
+      # - run: cd ${{ github.workspace }}/services/metric-service && mvn clean install -DskipTests
+      # - run: cd ${{ github.workspace }}/services/onboarding-service && mvn clean install -DskipTests
+      # - run: cd ${{ github.workspace }}/services/quotas-service && mvn clean install -DskipTests
+      # - run: cd ${{ github.workspace }}/services/settings-service && mvn clean install -DskipTests
+      # - run: cd ${{ github.workspace }}/services/tenant-service && mvn clean install -DskipTests
+      # - run: cd ${{ github.workspace }}/services/user-service && mvn clean install -DskipTests
 
   Compile-WebClient:
     runs-on: ubuntu-latest
@@ -61,4 +69,7 @@ jobs:
       - uses: actions/setup-node@v2
         with:
           node-version: 14
+      # CI=false is required because GitHub hosted runners set CI=true, which causes Warnings to be treated as Errors when doing yarn build
+      # this is a workaround to allow the build to succeed until we can get around to fixing the warnings generated
+      # TODO remove CI=false
       - run: cd ${{ github.workspace }}/client/web && yarn && CI=false yarn build
