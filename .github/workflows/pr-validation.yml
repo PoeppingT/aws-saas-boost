@@ -27,15 +27,18 @@ jobs:
       # Including a parent pom will solve both of the above.
       
       # Compile Installer
-      - run: cd "${{ github.workspace }}/installer" && mvn clean install -DskipTests
+      # - run: cd "${{ github.workspace }}/installer" && mvn clean install -DskipTests
       
       # Compile Layers
-      - run: find "${{ github.workspace }}/layers" -d 1 -type d | while read dir ; do cd $dir ; mvn clean install -DskipTests ; cd - ; done
+      - run: find ${{ github.workspace }}/layers -d 1 -type d
+      - run: find ${{ github.workspace }}/layers/ -d 1 -type d
+      - run: find ${{ github.workspace }}/layers
+      # - run: find "${{ github.workspace }}/layers" -d 1 -type d | while read dir ; do cd $dir ; mvn clean install -DskipTests ; cd - ; done
       # - run: cd ${{ github.workspace }}/layers/utils && mvn clean install -DskipTests
       # - run: cd ${{ github.workspace }}/layers/apigw-helper && mvn clean install -DskipTests
       
       # Compile Functions
-      - run: find "${{ github.workspace }}/functions" -d 1 -type d | while read dir ; do cd $dir ; mvn clean install -DskipTests ; cd - ; done
+      # - run: find "${{ github.workspace }}/functions" -d 1 -type d | while read dir ; do cd $dir ; mvn clean install -DskipTests ; cd - ; done
       # - run: cd ${{ github.workspace }}/functions/alb-update && mvn clean install -DskipTests
       # - run: cd ${{ github.workspace }}/functions/ecs-deploy && mvn clean install -DskipTests
       # - run: cd ${{ github.workspace }}/functions/ecs-service-update && mvn clean install -DskipTests
@@ -43,7 +46,7 @@ jobs:
       # - run: cd ${{ github.workspace }}/functions/system-rest-api-client && mvn clean install -DskipTests
       
       # Compile Resources
-      - run: find "${{ github.workspace }}/resources/custom-resources" -d 1 -type d | while read dir ; do cd $dir ; mvn clean install -DskipTests ; cd - ; done
+      # - run: find "${{ github.workspace }}/resources/custom-resources" -d 1 -type d | while read dir ; do cd $dir ; mvn clean install -DskipTests ; cd - ; done
       # - run: cd ${{ github.workspace }}/resources/custom-resources/cidr-dynamodb && mvn clean install -DskipTests
       # - run: cd ${{ github.workspace }}/resources/custom-resources/clear-s3-bucket && mvn clean install -DskipTests
       # - run: cd ${{ github.workspace }}/resources/custom-resources/fsx-dns-name && mvn clean install -DskipTests
@@ -52,7 +55,7 @@ jobs:
       # - run: cd ${{ github.workspace }}/resources/custom-resources/redshift-table && mvn clean install -DskipTests
       
       # Compile Services
-      - run: find "${{ github.workspace }}/services" -d 1 -type d | while read dir ; do cd $dir ; mvn clean install -DskipTests ; cd - ; done
+      # - run: find "${{ github.workspace }}/services" -d 1 -type d | while read dir ; do cd $dir ; mvn clean install -DskipTests ; cd - ; done
       # - run: cd ${{ github.workspace }}/services/metric-service && mvn clean install -DskipTests
       # - run: cd ${{ github.workspace }}/services/onboarding-service && mvn clean install -DskipTests
       # - run: cd ${{ github.workspace }}/services/quotas-service && mvn clean install -DskipTests
@@ -60,16 +63,16 @@ jobs:
       # - run: cd ${{ github.workspace }}/services/tenant-service && mvn clean install -DskipTests
       # - run: cd ${{ github.workspace }}/services/user-service && mvn clean install -DskipTests
 
-  Compile-WebClient:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-        with:
-          ref: ${{ github.event.pull_request.head.sha }}
-      - uses: actions/setup-node@v2
-        with:
-          node-version: 14
-      # CI=false is required because GitHub hosted runners set CI=true, which causes Warnings to be treated as Errors when doing yarn build
-      # this is a workaround to allow the build to succeed until we can get around to fixing the warnings generated
-      # TODO remove CI=false
-      - run: cd ${{ github.workspace }}/client/web && yarn && CI=false yarn build
+#   Compile-WebClient:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - uses: actions/checkout@v2
+#         with:
+#           ref: ${{ github.event.pull_request.head.sha }}
+#       - uses: actions/setup-node@v2
+#         with:
+#           node-version: 14
+#       # CI=false is required because GitHub hosted runners set CI=true, which causes Warnings to be treated as Errors when doing yarn build
+#       # this is a workaround to allow the build to succeed until we can get around to fixing the warnings generated
+#       # TODO remove CI=false
+#       - run: cd ${{ github.workspace }}/client/web && yarn && CI=false yarn build
