@@ -6,9 +6,16 @@ jobs:
   Compile-Java:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout PR
+        uses: actions/checkout@v2
         with:
           ref: ${{ github.event.pull_request.head.sha }}
+      - name: Cache Maven packages
+        uses: actions/cache@v2
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2
 
       # We use Corretto Java 11 for Lambda: https://docs.aws.amazon.com/lambda/latest/dg/lambda-runtimes.html
       # Currently amazon-corretto Java is not supported for GitHub actions on Ubuntu-latest. By default we're using Adopt JDK11
@@ -22,32 +29,49 @@ jobs:
       #     distribution: 'adopt'
       
       # TODO add parent pom for Java built services
-      # This is... not good. We currently have no way to build all Java code with a single command. 
-      # We can't just run mvn clean compile because later modules rely on the binaries of earlier ones. 
+      # This is... not great. We currently have no way to build all Java code with a single command. 
+      # And we can't just run mvn clean compile because later modules rely on the binaries of earlier ones. 
       # Including a parent pom will solve both of the above.
-      
-      # Compile Installer
-      - run: |
+      - name: Compile Installer
+        run: |
           cd "${{ github.workspace }}/installer"
           mvn clean install -DskipTests
-      
-      # Compile Layers
-      - run: |
+      - name: Compile Layers
+        run: |
           find ${{ github.workspace }}/layers -maxdepth 1 -mindepth 1 -type d | 
           while read dir ; do 
             cd $dir
+            echo "Building $dir"
             mvn clean install -DskipTests
             cd -
           done
-      
-      # Compile Functions
-      - run: find "${{ github.workspace }}/functions" -maxdepth 1 -mindepth 1 -type d | while read dir ; do cd $dir ; mvn clean install -DskipTests ; cd - ; done
-      
-      # Compile Resources
-      - run: find "${{ github.workspace }}/resources/custom-resources" -maxdepth 1 -mindepth 1 -type d | while read dir ; do cd $dir ; mvn clean install -DskipTests ; cd - ; done
-      
-      # Compile Services
-      - run: find "${{ github.workspace }}/services" -maxdepth 1 -mindepth 1 -type d | while read dir ; do cd $dir ; mvn clean install -DskipTests ; cd - ; done
+      - name: Compile Functions
+        run: |
+          find "${{ github.workspace }}/functions" -maxdepth 1 -mindepth 1 -type d | 
+          while read dir ; do 
+            cd $dir
+            echo "Building $dir"
+            mvn clean install -DskipTests
+            cd -
+          done
+      - name: Compile Resources
+        run: |
+          find "${{ github.workspace }}/resources/custom-resources" -maxdepth 1 -mindepth 1 -type d |
+          while read dir ; do 
+            cd $dir
+            echo "Building $dir"
+            mvn clean install -DskipTests
+            cd -
+          done
+      - name: Compile Services
+        run: |
+          find "${{ github.workspace }}/services" -maxdepth 1 -mindepth 1 -type d | 
+          while read dir ; do 
+            cd $dir
+            echo "${{ jobs.${{ github.job }}.name }} building $dir"
+            mvn clean install -DskipTests
+            cd -
+          done
 
   Compile-WebClient:
     runs-on: ubuntu-latest
