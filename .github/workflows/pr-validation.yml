@@ -30,7 +30,7 @@ jobs:
       # - run: cd "${{ github.workspace }}/installer" && mvn clean install -DskipTests
       
       # Compile Layers
-      - run: find ${{ github.workspace }}/layers -maxdepth 1 -type d | while read dir ; do cd $dir ; mvn clean install -DskipTests ; cd - ; done
+      - run: find ${{ github.workspace }}/layers -maxdepth 1 -type d
       # - run: find "${{ github.workspace }}/layers" -d 1 -type d | while read dir ; do cd $dir ; mvn clean install -DskipTests ; cd - ; done
       # - run: cd ${{ github.workspace }}/layers/utils && mvn clean install -DskipTests
       # - run: cd ${{ github.workspace }}/layers/apigw-helper && mvn clean install -DskipTests
