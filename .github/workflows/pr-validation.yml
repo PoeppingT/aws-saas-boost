@@ -64,5 +64,4 @@ jobs:
       - name: Build WebClient
         run: |
           cd ${{ github.workspace }}/client/web
-          yarn
           CI=false yarn build
